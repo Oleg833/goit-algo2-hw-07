@@ -12,7 +12,7 @@ def fibonacci_lru(n):
     return fibonacci_lru(n - 1) + fibonacci_lru(n - 2)
 
 
-# Реалізація Splay Tree
+
 class SplayTreeNode:
     def __init__(self, key, value):
         self.key = key

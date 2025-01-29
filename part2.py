@@ -2,15 +2,15 @@ import timeit
 import functools
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-import ace_tools
+from tabulate import tabulate
 
-# Реалізація Fibonacci з LRU Cache
+
 @functools.lru_cache(maxsize=None)
 def fibonacci_lru(n):
     if n < 2:
         return n
     return fibonacci_lru(n - 1) + fibonacci_lru(n - 2)
+
 
 # Реалізація Splay Tree
 class SplayTreeNode:
@@ -19,6 +19,7 @@ class SplayTreeNode:
         self.value = value
         self.left = None
         self.right = None
+
 
 class SplayTree:
     def __init__(self):
@@ -96,6 +97,7 @@ class SplayTree:
             return self.root.value
         return None
 
+
 def fibonacci_splay(n, tree):
     if n < 2:
         return n
@@ -108,12 +110,12 @@ def fibonacci_splay(n, tree):
     tree.insert(n, result)
     return result
 
-# Підготовка тестових значень
+
 n_values = list(range(0, 951, 50))
 lru_times = []
 splay_times = []
 
-# Вимірювання часу виконання
+
 for n in n_values:
     # LRU Cache
     lru_time = timeit.timeit(lambda: fibonacci_lru(n), number=10) / 10
@@ -124,10 +126,10 @@ for n in n_values:
     splay_time = timeit.timeit(lambda: fibonacci_splay(n, splay_tree), number=10) / 10
     splay_times.append(splay_time)
 
-# Побудова графіка
+
 plt.figure(figsize=(10, 6))
-plt.plot(n_values, lru_times, marker='o', label="LRU Cache")
-plt.plot(n_values, splay_times, marker='s', label="Splay Tree")
+plt.plot(n_values, lru_times, marker="o", label="LRU Cache")
+plt.plot(n_values, splay_times, marker="s", label="Splay Tree")
 plt.xlabel("n (номер числа Фібоначчі)")
 plt.ylabel("Середній час виконання (секунди)")
 plt.title("Порівняння часу виконання LRU Cache та Splay Tree")
@@ -135,6 +137,13 @@ plt.legend()
 plt.grid()
 plt.show()
 
-# Виведення таблиці
-df = pd.DataFrame({"n": n_values, "LRU Cache (секунди)": lru_times, "Splay Tree (секунди)": splay_times})
-ace_tools.display_dataframe_to_user(name="Порівняльна таблиця часу виконання", dataframe=df)
+
+formatted_table = tabulate(
+    [
+        [n, f"{lru:.8f}", f"{splay:.8f}"]
+        for n, lru, splay in zip(n_values, lru_times, splay_times)
+    ],
+    headers=["n", "LRU Cache Time (s)", "Splay Tree Time (s)"],
+    tablefmt="pretty",
+)
+print(formatted_table)
